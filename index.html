@@ -3,9 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Premium Wireless Headphones | BrandShield</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-indigo-600">BrandShield</div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#" class="text-gray-600 hover:text-indigo-600">Home</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600">Shop</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600">About</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600">Contact</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-gray-600 hover:text-indigo-600"><i class="fas fa-search"></i></a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600"><i class="fas fa-user"></i></a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="absolute -top-2 -right-2 bg-indigo-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">2</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="container mx-auto px-4 py-3 text-sm">
+        <a href="#" class="text-gray-500 hover:text-indigo-600">Home</a> / 
+        <a href="#" class="text-gray-500 hover:text-indigo-600">Electronics</a> / 
+        <a href="#" class="text-gray-500 hover:text-indigo-600">Audio</a> / 
+        <span class="text-gray-800">Premium Wireless Headphones</span>
+    </div>
+
+    <!-- Product Section -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="flex flex-col md:flex-row -mx-4">
+            <!-- Product Images -->
+            <div class="md:w-1/2 px-4 mb-8 md:mb-0">
+                <div class="mb-4 rounded-lg overflow-hidden border border-gray-200">
+                    <img src="img1.jpg" alt="Premium Wireless Headphones" class="w-full h-auto object-cover">
+                </div>
+                <div class="flex space-x-2">
+                    <div class="w-1/4 border border-indigo-600 rounded-lg overflow-hidden">
+                        <img src="img2.jpg" alt="Headphones front" class="w-full h-auto object-cover">
+                    </div>
+                    <div class="w-1/4 border border-gray-200 hover:border-indigo-600 rounded-lg overflow-hidden">
+                        <img src="img3.jpg" alt="Headphones side" class="w-full h-auto object-cover">
+                    </div>
+                    <div class="w-1/4 border border-gray-200 hover:border-indigo-600 rounded-lg overflow-hidden">
+                        <img src="img4.jpg" alt="Headphones back" class="w-full h-auto object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="md:w-1/2 px-4">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="mb-2">
+                        <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">In Stock</span>
+                        <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full ml-2">Free Shipping</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Premium Wireless Headphones</h1>
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm">4.5 (248 reviews)</span>
+                    </div>
+                    <div class="mb-6">
+                        <span class="text-3xl font-bold text-gray-900">$249.99</span>
+                        <span class="text-lg text-gray-500 line-through ml-2">$299.99</span>
+                        <span class="text-green-600 ml-2">Save 17%</span>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Experience premium sound quality with our wireless headphones. Featuring active noise cancellation, 
+                        Bluetooth 5.0 connectivity, and up to 30 hours of battery life. The perfect companion for music lovers 
+                        and professionals alike.
+                    </p>
+                    
+                    <!-- Color Selection -->
+                    <div class="mb-6">
+                        <h3 class="text-gray-700 text-sm font-medium mb-2">Color</h3>
+                        <div class="flex space-x-3">
+                            <button class="w-8 h-8 bg-black rounded-full border-2 border-gray-300 focus:outline-none focus:border-indigo-500"></button>
+                            <button class="w-8 h-8 bg-white rounded-full border-2 border-gray-300 focus:outline-none focus:border-indigo-500"></button>
+                            <button class="w-8 h-8 bg-blue-600 rounded-full border-2 border-indigo-500 focus:outline-none focus:border-indigo-500"></button>
+                            <button class="w-8 h-8 bg-red-500 rounded-full border-2 border-gray-300 focus:outline-none focus:border-indigo-500"></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantity and Add to Cart -->
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="flex border border-gray-300 rounded-md">
+                            <button class="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-l-md">-</button>
+                            <input type="text" value="1" class="w-12 text-center border-0 focus:outline-none focus:ring-0">
+                            <button class="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-r-md">+</button>
+                        </div>
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md flex-grow transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                        </button>
+                        <button class="text-gray-600 hover:text-red-500 border border-gray-300 p-2 rounded-md hover:border-red-500 transition duration-300">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Shipping & Returns -->
+                    <div class="border-t border-gray-200 pt-4 space-y-2 text-sm text-gray-600">
+                        <p class="flex items-center">
+                            <i class="fas fa-truck mr-2 text-indigo-600"></i> Free shipping on orders over $50
+                        </p>
+                        <p class="flex items-center">
+                            <i class="fas fa-undo mr-2 text-indigo-600"></i> 30-day easy returns
+                        </p>
+                        <p class="flex items-center">
+                            <i class="fas fa-shield-alt mr-2 text-indigo-600"></i> 2-year warranty included
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Tabs -->
+        <div class="mt-12">
+            <div class="border-b border-gray-200">
+                <div class="flex -mb-px">
+                    <button class="px-6 py-3 border-b-2 border-indigo-600 text-indigo-600 font-medium">Description</button>
+                    <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 font-medium hover:text-indigo-600">Specifications</button>
+                    <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 font-medium hover:text-indigo-600">Reviews (248)</button>
+                </div>
+            </div>
+            <div class="py-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Product Description</h3>
+                <div class="text-gray-600 space-y-4">
+                    <p>
+                        Our Premium Wireless Headphones deliver studio-quality sound in a comfortable, elegant design. 
+                        With the latest active noise cancellation technology, you can immerse yourself in your music without 
+                        distractions from the outside world.
+                    </p>
+                    <p>
+                        The built-in microphone array ensures crystal-clear calls, while the intuitive touch controls let you 
+                        manage your music, calls, and voice assistant with ease. The premium materials not only look great but 
+                        are built to last through years of daily use.
+                    </p>
+                    <h4 class="text-lg font-medium text-gray-800 mt-6 mb-2">Key Features</h4>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Active Noise Cancellation technology</li>
+                        <li>Bluetooth 5.0 with multipoint connection</li>
+                        <li>Up to 30 hours of battery life</li>
+                        <li>Fast charging - 5 minutes for 3 hours of playback</li>
+                        <li>High-definition audio with deep, accurate bass</li>
+                        <li>Comfortable memory foam ear cushions</li>
+                        <li>Foldable design for easy storage</li>
+                        <li>Built-in microphones for clear calls</li>
+                        <li>Touch controls for music and calls</li>
+                        <li>Voice assistant compatibility</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products -->
+        <div class="mt-16">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">You May Also Like</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b" alt="Wireless Earbuds" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Wireless Earbuds Pro</h3>
+                        <div class="flex text-yellow-400 text-xs mb-1">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="text-gray-500 ml-1">(189)</span>
+                        </div>
+                        <p class="text-gray-900 font-medium">$129.99</p>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b" alt="Headphone Stand" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Premium Headphone Stand</h3>
+                        <div class="flex text-yellow-400 text-xs mb-1">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="text-gray-500 ml-1">(65)</span>
+                        </div>
+                        <p class="text-gray-900 font-medium">$39.99</p>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1585298723682-7115561c51b7" alt="Portable Speaker" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Waterproof Bluetooth Speaker</h3>
+                        <div class="flex text-yellow-400 text-xs mb-1">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span class="text-gray-500 ml-1">(112)</span>
+                        </div>
+                        <p class="text-gray-900 font-medium">$89.99</p>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1545127398-14699f92334b" alt="Headphone Case" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Protective Headphone Case</h3>
+                        <div class="flex text-yellow-400 text-xs mb-1">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="text-gray-500 ml-1">(78)</span>
+                        </div>
+                        <p class="text-gray-900 font-medium">$24.99</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">BrandShield</h3>
+                    <p class="text-gray-400 mb-4">Premium audio products for everyday excellence. Experience sound as it was meant to be heard.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-medium mb-4">Shop</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Headphones</a></li>
+                        <li><a href="#" class="hover:text-white">Earbuds</a></li>
+                        <li><a href="#" class="hover:text-white">Speakers</a></li>
+                        <li><a href="#" class="hover:text-white">Accessories</a></li>
+                        <li><a href="#" class="hover:text-white">Special Offers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-medium mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white">Returns Policy</a></li>
+                        <li><a href="#" class="hover:text-white">Warranty</a></li>
+                        <li><a href="#" class="hover:text-white">Repair</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-medium mb-4">Newsletter</h4>
+                    <p class="text-gray-400 mb-4">Subscribe to our newsletter for the latest updates and exclusive offers.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 w-full rounded-l-md focus:outline-none text-gray-900">
+                        <button class="bg-indigo-600 rounded-r-md px-4 hover:bg-indigo-700 transition duration-300">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400">© 2023 BrandShield. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 text-sm hover:text-white">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 text-sm hover:text-white">Terms of Service</a>
+                    <a href="#" class="text-gray-400 text-sm hover:text-white">Shipping Information</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
