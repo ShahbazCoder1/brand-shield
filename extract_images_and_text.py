@@ -68,6 +68,3 @@ def extract_images_and_text(url, download_folder="downloaded_images"):
 
     print("[✓] Text content saved into priority files.")
 
-# Example usage
-extract_images_and_text("https://0.0.0.0:8000/")
-
