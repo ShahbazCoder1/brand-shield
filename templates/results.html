@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Shield - Results</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-white min-h-screen">
+  <!-- Header Section -->
+  <header class="bg-blue-600 py-6 shadow-lg">
+    <div class="container mx-auto text-center">
+      <h1 class="text-4xl font-bold text-white">Brand Shield</h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-12">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold mb-2">Analysis Results</h2>
+        <p class="text-gray-600">
+          Website analyzed: 
+          <a href="{{ url }}" target="_blank" class="text-blue-500 hover:underline">{{ url }}</a>
+        </p>
+      </div>
+      <div class="mb-8">
+        <a href="/" class="text-blue-500 hover:underline">← Analyze another website</a>
+      </div>
+      
+      <!-- Extracted Images Section -->
+      <div class="mb-6">
+        <h3 class="text-xl font-medium mb-2">Extracted Images</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md overflow-auto max-h-96">
+          {% if images %}
+            {% for img_src in images %}
+              <div class="overflow-hidden rounded-md shadow">
+                <img src="{{ img_src }}" alt="Extracted image" class="w-full h-32 object-cover">
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-gray-500">No images found.</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- High Priority Text Section -->
+      <div class="mb-6">
+        <h3 class="text-xl font-medium mb-2">High Priority Text</h3>
+        <div class="p-4 bg-gray-50 rounded-md overflow-auto max-h-64 text-sm">
+          {% if priority_1 %}
+            {% for line in priority_1.split('\n') %}
+              <p class="mb-1">{{ line }}</p>
+            {% endfor %}
+          {% else %}
+            <p class="text-gray-500">No high priority text found.</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Secondary Text Section -->
+      <div class="mb-6">
+        <h3 class="text-xl font-medium mb-2">Secondary Text</h3>
+        <div class="p-4 bg-gray-50 rounded-md overflow-auto max-h-64 text-sm">
+          {% if priority_2 %}
+            {% for line in priority_2.split('\n') %}
+              <p class="mb-1">{{ line }}</p>
+            {% endfor %}
+          {% else %}
+            <p class="text-gray-500">No secondary text found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

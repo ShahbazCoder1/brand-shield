@@ -73,8 +73,8 @@ def extract_images_and_text(url, base_folder="downloaded_images"):
         except Exception as e:
             print(f"[✗] Failed to download {full_url}: {e}")
 
-<<<<<<< HEAD
-#extract_images_and_text("http://localhost:8000/")
-=======
-extract_images_and_text("https://shahbazcoder1.github.io/brand-shield/")
->>>>>>> 98f47a1 (Add keyword extraction and brand name generation script)
+# <<<<<<< HEAD
+# extract_images_and_text("http://localhost:8000/")
+# =======
+# extract_images_and_text("https://shahbazcoder1.github.io/brand-shield/")
+# >>>>>>> 98f47a1 (Add keyword extraction and brand name generation script)
