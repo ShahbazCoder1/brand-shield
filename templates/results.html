@@ -3,75 +3,463 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brand Shield - Results</title>
+  <title>Brand Shield - Analysis Results</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .gradient-primary {
+      background: linear-gradient(135deg, #4F46E5 0%, #2563EB 100%);
+    }
+    .gradient-secondary {
+      background: linear-gradient(135deg, #f7f9fc 0%, #edf2f7 100%);
+    }
+    .card {
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .section-animate {
+      transition: all 0.3s ease;
+    }
+    .section-animate:hover {
+      transform: translateY(-2px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+    .zoom-on-hover {
+      transition: transform 0.3s ease;
+    }
+    .zoom-on-hover:hover {
+      transform: scale(1.02);
+    }
+    @media print {
+      .no-print {
+        display: none;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+      body {
+        font-size: 12pt;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-white min-h-screen">
-  <!-- Header Section -->
-  <header class="bg-blue-600 py-6 shadow-lg">
-    <div class="container mx-auto text-center">
-      <h1 class="text-4xl font-bold text-white">Brand Shield</h1>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <header class="gradient-primary text-white py-4 shadow-lg sticky top-0 z-50 no-print">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <div class="bg-white p-2 rounded-full shadow-md mr-3">
+            <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight">Brand Shield</h1>
+        </div>
+        <nav class="hidden md:flex items-center space-x-1">
+          <a href="/" class="px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200">Home</a>
+          <a href="#" class="px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200">Features</a>
+          <a href="#" class="px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200">About</a>
+          <a href="#" class="px-4 py-2 rounded-md bg-white/20 hover:bg-white/30 text-white transition-all duration-200">Contact</a>
+        </nav>
+        <div class="flex items-center space-x-2">
+          <button id="print-report" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-md transition-colors duration-200 flex items-center">
+            <i class="fas fa-print mr-2"></i>
+            <span class="hidden md:inline">Print Report</span>
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-12">
-    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
-      <div class="mb-6">
-        <h2 class="text-2xl font-semibold mb-2">Analysis Results</h2>
-        <p class="text-gray-600">
-          Website analyzed: 
-          <a href="{{ url }}" target="_blank" class="text-blue-500 hover:underline">{{ url }}</a>
-        </p>
+  <div class="bg-white border-b border-gray-200 no-print">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center">
+        <a href="/" class="text-blue-600 hover:text-blue-800 mr-2">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-xl font-semibold text-gray-800">Analysis Results</h1>
       </div>
-      <div class="mb-8">
-        <a href="/" class="text-blue-500 hover:underline">← Analyze another website</a>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-4 py-6 flex-grow">
+    <div class="max-w-5xl mx-auto">
+      <div class="card bg-white p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Website Analysis Report</h2>
+            <div class="flex items-center mb-4">
+              <i class="fas fa-globe text-blue-500 mr-2"></i>
+              <a href="{{ url }}" target="_blank" class="text-blue-600 hover:underline font-medium break-all">{{ url }}</a>
+            </div>
+          </div>
+          <div class="mt-4 md:mt-0">
+            <div class="flex items-center space-x-2 text-sm text-gray-500">
+              <i class="far fa-calendar-alt"></i>
+              <span>Analyzed on: {{ now().strftime('%b %d, %Y') }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+          <div class="card section-animate bg-blue-50 p-4 rounded-lg text-center">
+            <div class="text-3xl font-bold text-blue-600 mb-1">{{ images|length }}</div>
+            <div class="text-sm text-gray-600">Images Found</div>
+          </div>
+          <div class="card section-animate bg-green-50 p-4 rounded-lg text-center">
+            <div class="text-3xl font-bold text-green-600 mb-1">
+              {% if priority_1 %}{{ priority_1.split('\n')|length }}{% else %}0{% endif %}
+            </div>
+            <div class="text-sm text-gray-600">Priority Elements</div>
+          </div>
+          <div class="card section-animate bg-yellow-50 p-4 rounded-lg text-center">
+            <div class="text-3xl font-bold text-yellow-600 mb-1">
+              {% if priority_2 %}{{ priority_2.split('\n')|length }}{% else %}0{% endif %}
+            </div>
+            <div class="text-sm text-gray-600">Secondary Elements</div>
+          </div>
+          <div class="card section-animate bg-purple-50 p-4 rounded-lg text-center">
+            <div class="text-3xl font-bold text-purple-600 mb-1">
+              {% if priority_1 %}{{ priority_1.split('\n')|length + priority_2.split('\n')|length }}{% else %}0{% endif %}
+            </div>
+            <div class="text-sm text-gray-600">Total Text Items</div>
+          </div>
+        </div>
       </div>
       
-      <!-- Extracted Images Section -->
-      <div class="mb-6">
-        <h3 class="text-xl font-medium mb-2">Extracted Images</h3>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md overflow-auto max-h-96">
+      <!-- Main Content Sections -->
+      <div class="flex flex-col md:flex-row gap-6 mb-6">
+        <!-- Main Screenshot Section -->
+        <div class="md:w-2/3">
+          <div class="card bg-white p-5">
+            <h3 class="text-lg font-semibold mb-4 flex items-center text-gray-800">
+              <i class="fas fa-image text-blue-500 mr-2"></i>
+              Primary Screenshot
+            </h3>
+            <div class="bg-gray-50 rounded-lg overflow-hidden shadow-inner">
+              {% if images %}
+                <img src="{{ images[0] }}" alt="Main screenshot" class="w-full object-contain max-h-[500px] zoom-on-hover">
+              {% else %}
+                <div class="flex flex-col items-center justify-center p-16">
+                  <i class="fas fa-image text-gray-300 text-4xl mb-3"></i>
+                  <p class="text-gray-400">No screenshots available</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        
+        <div class="md:w-1/3">
+          <div class="card bg-white p-5 h-full">
+            <h3 class="text-lg font-semibold mb-4 flex items-center text-gray-800">
+              <i class="fas fa-images text-blue-500 mr-2"></i>
+              Key Images
+              <span class="ml-auto text-xs text-gray-500">{{ images|length }} found</span>
+            </h3>
+            
+            <div class="space-y-4">
+              {% if images|length > 0 %}
+                {% for i in range(min(3, images|length)) %}
+                  <div class="bg-gray-50 rounded-lg overflow-hidden shadow-inner zoom-on-hover">
+                    <img src="{{ images[i] }}" alt="Thumbnail {{ i+1 }}" class="w-full h-32 object-cover">
+                  </div>
+                {% endfor %}
+                
+                {% if images|length > 3 %}
+                  <button id="view-all-images" class="w-full py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm flex items-center justify-center transition-colors duration-200">
+                    <i class="fas fa-images mr-2"></i>
+                    View all {{ images|length }} images
+                  </button>
+                {% endif %}
+                
+                {% for i in range(images|length, 3) %}
+                  <div class="aspect-video bg-gray-100 flex items-center justify-center rounded-lg">
+                    <p class="text-gray-400 text-sm">Image {{ i+1 }}</p>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="flex flex-col items-center justify-center p-10 bg-gray-50 rounded-lg">
+                  <i class="fas fa-image text-gray-300 text-3xl mb-2"></i>
+                  <p class="text-gray-400 text-sm">No images available</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex flex-col md:flex-row gap-6 mb-6">
+        <div class="md:w-1/2">
+          <div class="card bg-white p-5">
+            <h3 class="text-lg font-semibold mb-4 flex items-center text-gray-800">
+              <i class="fas fa-star text-yellow-500 mr-2"></i>
+              High Priority Text
+              <span class="ml-auto text-xs text-gray-500">
+                {% if priority_1 %}{{ priority_1.split('\n')|length }}{% else %}0{% endif %} elements
+              </span>
+            </h3>
+            <div class="custom-scrollbar overflow-auto max-h-72">
+              {% if priority_1 %}
+                {% for line in priority_1.split('\n') %}
+                  <div class="py-2 px-3 border-l-4 border-blue-500 mb-3 bg-blue-50 rounded-r-md hover:bg-blue-100 transition-colors duration-200">
+                    <p class="text-gray-800">{{ line }}</p>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="flex flex-col items-center justify-center py-8 bg-gray-50 rounded-lg">
+                  <i class="fas fa-info-circle text-gray-300 text-3xl mb-2"></i>
+                  <p class="text-gray-500">No high priority text found.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        
+        <div class="md:w-1/2">
+          <div class="card bg-white p-5">
+            <h3 class="text-lg font-semibold mb-4 flex items-center text-gray-800">
+              <i class="fas fa-align-left text-gray-500 mr-2"></i>
+              Secondary Text
+              <span class="ml-auto text-xs text-gray-500">
+                {% if priority_2 %}{{ priority_2.split('\n')|length }}{% else %}0{% endif %} elements
+              </span>
+            </h3>
+            <div class="custom-scrollbar overflow-auto max-h-72">
+              {% if priority_2 %}
+                {% for line in priority_2.split('\n') %}
+                  <div class="py-2 px-3 border-l-4 border-gray-300 mb-3 bg-gray-50 rounded-r-md hover:bg-gray-100 transition-colors duration-200">
+                    <p class="text-gray-700">{{ line }}</p>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="flex flex-col items-center justify-center py-8 bg-gray-50 rounded-lg">
+                  <i class="fas fa-info-circle text-gray-300 text-3xl mb-2"></i>
+                  <p class="text-gray-500">No secondary text found.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="all-images-section" class="card bg-white p-5 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+            <i class="fas fa-photo-film text-blue-500 mr-2"></i>
+            All Extracted Images
+          </h3>
+          <div class="text-gray-500 text-sm">{{ images|length }} images found</div>
+        </div>
+        
+        <div id="images-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 custom-scrollbar overflow-auto max-h-[800px]">
           {% if images %}
             {% for img_src in images %}
-              <div class="overflow-hidden rounded-md shadow">
-                <img src="{{ img_src }}" alt="Extracted image" class="w-full h-32 object-cover">
+              <div class="group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow transition-shadow duration-200">
+                <div class="relative aspect-square overflow-hidden">
+                  <img src="{{ img_src }}" alt="Extracted image" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+                  <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-60 transition-opacity duration-300 flex items-center justify-center">
+                    <a href="{{ img_src }}" target="_blank" class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <i class="fas fa-external-link-alt"></i>
+                    </a>
+                  </div>
+                </div>
               </div>
             {% endfor %}
           {% else %}
-            <p class="text-gray-500">No images found.</p>
+            <div class="col-span-full flex flex-col items-center justify-center py-10">
+              <i class="fas fa-images text-gray-300 text-4xl mb-3"></i>
+              <p class="text-gray-400">No images found on this website.</p>
+            </div>
           {% endif %}
         </div>
       </div>
-      
-      <!-- High Priority Text Section -->
-      <div class="mb-6">
-        <h3 class="text-xl font-medium mb-2">High Priority Text</h3>
-        <div class="p-4 bg-gray-50 rounded-md overflow-auto max-h-64 text-sm">
-          {% if priority_1 %}
-            {% for line in priority_1.split('\n') %}
-              <p class="mb-1">{{ line }}</p>
-            {% endfor %}
-          {% else %}
-            <p class="text-gray-500">No high priority text found.</p>
-          {% endif %}
-        </div>
-      </div>
-      
-      <!-- Secondary Text Section -->
-      <div class="mb-6">
-        <h3 class="text-xl font-medium mb-2">Secondary Text</h3>
-        <div class="p-4 bg-gray-50 rounded-md overflow-auto max-h-64 text-sm">
-          {% if priority_2 %}
-            {% for line in priority_2.split('\n') %}
-              <p class="mb-1">{{ line }}</p>
-            {% endfor %}
-          {% else %}
-            <p class="text-gray-500">No secondary text found.</p>
-          {% endif %}
+    
+      <div class="flex justify-between items-center mb-6 no-print">
+        <a href="/" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+          <i class="fas fa-search-plus mr-2"></i>
+          Analyze Another Website
+        </a>
+        <div class="flex space-x-3">
+          <button id="download-report" class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg transition duration-200">
+            <i class="fas fa-download mr-2"></i>
+            Download
+          </button>
+          <button id="share-report" class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg transition duration-200">
+            <i class="fas fa-share-alt mr-2"></i>
+            Share
+          </button>
         </div>
       </div>
     </div>
   </main>
+
+  <footer class="bg-gray-800 text-gray-300 py-8 mt-auto no-print">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <div class="flex items-center">
+            <div class="bg-white p-2 rounded-full shadow-md mr-3">
+              <i class="fas fa-shield-alt text-xl text-blue-600"></i>
+            </div>
+            <h2 class="text-xl font-bold text-white">Brand Shield</h2>
+          </div>
+          <p class="text-sm text-gray-400 mt-2">Protecting your brand identity online</p>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-6 md:gap-10">
+          <div>
+            <h3 class="text-sm font-semibold uppercase mb-2 text-gray-100">Company</h3>
+            <ul class="space-y-1 text-sm">
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">About Us</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Our Team</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Careers</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold uppercase mb-2 text-gray-100">Support</h3>
+            <ul class="space-y-1 text-sm">
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Help Center</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Contact Us</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold uppercase mb-2 text-gray-100">Legal</h3>
+            <ul class="space-y-1 text-sm">
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <hr class="border-gray-700 my-6">
+      
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <p class="text-sm">&copy; 2023 Brand Shield. All rights reserved.</p>
+        <div class="flex space-x-5 mt-4 md:mt-0">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-linkedin"></i></a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Share Analysis Report</h3>
+        <button id="close-share-modal" class="text-gray-400 hover:text-gray-500">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mb-4">
+        <p class="text-gray-600 mb-3">Share this analysis with others:</p>
+        <div class="flex items-center border border-gray-300 rounded-md overflow-hidden">
+          <input type="text" readonly value="{{ request.url }}" class="flex-grow p-2 focus:outline-none text-sm" id="share-url">
+          <button id="copy-url" class="bg-gray-100 px-3 py-2 text-gray-700 hover:bg-gray-200">
+            <i class="far fa-copy"></i>
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">The link will remain valid for 30 days</p>
+      </div>
+      <div class="flex justify-center space-x-4">
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-200">
+          <i class="far fa-envelope mr-2"></i>
+          Email
+        </button>
+        <button class="bg-[#1877F2] hover:bg-[#0b5fce] text-white px-4 py-2 rounded-md transition duration-200">
+          <i class="fab fa-facebook-f mr-2"></i>
+          Facebook
+        </button>
+        <button class="bg-[#1DA1F2] hover:bg-[#0c85d0] text-white px-4 py-2 rounded-md transition duration-200">
+          <i class="fab fa-twitter mr-2"></i>
+          Twitter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const viewAllImagesBtn = document.getElementById('view-all-images');
+      if (viewAllImagesBtn) {
+        viewAllImagesBtn.addEventListener('click', function() {
+          document.getElementById('all-images-section').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+      
+      const printReportBtn = document.getElementById('print-report');
+      if (printReportBtn) {
+        printReportBtn.addEventListener('click', function() {
+          window.print();
+        });
+      }
+      
+      const shareReportBtn = document.getElementById('share-report');
+      const shareModal = document.getElementById('share-modal');
+      const closeShareModal = document.getElementById('close-share-modal');
+      const copyUrlBtn = document.getElementById('copy-url');
+      
+      if (shareReportBtn && shareModal) {
+        shareReportBtn.addEventListener('click', function() {
+          shareModal.classList.remove('hidden');
+        });
+      }
+      
+      if (closeShareModal) {
+        closeShareModal.addEventListener('click', function() {
+          shareModal.classList.add('hidden');
+        });
+      }
+      
+      if (copyUrlBtn) {
+        copyUrlBtn.addEventListener('click', function() {
+          const shareUrl = document.getElementById('share-url');
+          shareUrl.select();
+          document.execCommand('copy');
+          
+          copyUrlBtn.innerHTML = '<i class="fas fa-check"></i>';
+          setTimeout(() => {
+            copyUrlBtn.innerHTML = '<i class="far fa-copy"></i>';
+          }, 2000);
+        });
+      }
+      
+      shareModal?.addEventListener('click', function(e) {
+        if (e.target === shareModal) {
+          shareModal.classList.add('hidden');
+        }
+      });
+      
+      const downloadReportBtn = document.getElementById('download-report');
+      if (downloadReportBtn) {
+        downloadReportBtn.addEventListener('click', function() {
+          alert('Report download feature coming soon.');
+        });
+      }
+    });
+  </script>
 </body>
 </html>

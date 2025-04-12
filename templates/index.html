@@ -3,148 +3,400 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brand Shield</title>
-  <!-- Include Tailwind CSS from CDN -->
+  <title>Brand Shield - Website Analyzer</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Include jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+   
+    .gradient-primary {
+      background: linear-gradient(135deg, #4F46E5 0%, #2563EB 100%);
+    }
+    .gradient-secondary {
+      background: linear-gradient(135deg, #f7f9fc 0%, #edf2f7 100%);
+    }
+   
+    .card {
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    input:focus, button:focus {
+      outline: none;
+      ring: 2px;
+      ring-color: #3b82f6;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-white min-h-screen">
-  <!-- Header Section -->
-  <header class="bg-blue-600 py-6 shadow-lg">
-    <div class="container mx-auto text-center">
-      <h1 class="text-4xl font-bold text-white">Brand Shield</h1>
-      <p class="text-blue-200 mt-2">Analyze and extract website content effortlessly</p>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <header class="gradient-primary text-white py-4 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <div class="bg-white p-2 rounded-full shadow-md mr-3">
+            <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight">Brand Shield</h1>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-12">
-    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
-      <!-- Error Message -->
-      {% if error %}
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-        <p>Error: {{ error }}</p>
-      </div>
-      {% endif %}
-
-      <!-- URL Submission Form -->
-      <form id="url-form" class="mb-8">
-        <div class="mb-4">
-          <input
-            type="url"
-            id="url-input"
-            name="url"
-            placeholder="https://example.com"
-            required
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-        </div>
-        <button
-          type="submit"
-          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-md transition duration-300"
-        >
-          Analyze Website
-        </button>
-      </form>
-
-      <!-- Loading Animation -->
-      <div id="loading-animation" class="hidden flex flex-col items-center justify-center py-8">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 mb-4"></div>
-        <p class="text-gray-600 text-center">Processing website content...</p>
-        <p class="text-gray-500 text-sm mt-2">This may take a few moments.</p>
-      </div>
-
-      <!-- Results Section -->
-      <div id="results-container" class="hidden">
-        <h2 class="text-2xl font-semibold mb-4">Analysis Results</h2>
-
-        <!-- Extracted Images -->
-        <div class="mb-6">
-          <h3 class="text-xl font-medium mb-2">Extracted Images</h3>
-          <div id="images-container" class="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md overflow-auto max-h-96">
-            <!-- Images will be inserted here -->
+  <main class="container mx-auto px-4 py-8 flex-grow">
+    <div class="card bg-white overflow-hidden max-w-5xl mx-auto">
+      <div class="flex flex-col md:flex-row">
+        
+        <div class="md:w-1/3 p-8 border-b md:border-b-0 md:border-r border-gray-100 bg-white">
+          <div id="input-section">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Analyze Website</h2>
+            
+            {% if error %}
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 fade-in">
+              <div class="flex items-start">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-exclamation-circle text-red-500"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm">{{ error }}</p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            
+            <form id="url-form" class="mb-8">
+              <div class="mb-5">
+                <label for="url-input" class="block text-sm font-medium text-gray-700 mb-2">Website URL</label>
+                <div class="relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <i class="fas fa-globe text-gray-400"></i>
+                  </div>
+                  <input
+                    type="url"
+                    id="url-input"
+                    name="url"
+                    placeholder="https://example.com"
+                    required
+                    class="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  >
+                </div>
+                <p class="mt-1 text-xs text-gray-500">Enter a full URL including http:// or https://</p>
+              </div>
+              <button
+                type="submit"
+                class="w-full gradient-primary hover:opacity-90 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+              >
+                <i class="fas fa-search-plus mr-2"></i>
+                Analyze Website
+              </button>
+            </form>
+            
+            <div class="mt-10">
+              <h3 class="text-lg font-semibold mb-4 text-gray-800">What We Analyze</h3>
+              <ul class="space-y-4">
+                <li class="flex items-start">
+                  <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                    <i class="fas fa-image text-green-600 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-gray-700">Extract and analyze all images</p>
+                    <p class="text-xs text-gray-500 mt-1">All website imagery for brand assessment</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                    <i class="fas fa-heading text-blue-600 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-gray-700">High priority text elements</p>
+                    <p class="text-xs text-gray-500 mt-1">Headlines and prominent messaging</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                    <i class="fas fa-paragraph text-purple-600 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-gray-700">Secondary content collection</p>
+                    <p class="text-xs text-gray-500 mt-1">Supporting paragraphs and descriptions</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="flex-shrink-0 h-6 w-6 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
+                    <i class="fas fa-chart-pie text-yellow-600 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-gray-700">Comprehensive report</p>
+                    <p class="text-xs text-gray-500 mt-1">Detailed analysis with actionable insights</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div id="loading-animation" class="hidden py-16">
+            <div class="flex flex-col items-center justify-center">
+              <div class="relative">
+                <div class="animate-spin rounded-full h-20 w-20 border-b-4 border-blue-500"></div>
+                <div class="absolute top-0 left-0 h-20 w-20 rounded-full border-t-4 border-blue-300 animate-ping opacity-20"></div>
+              </div>
+              <p class="text-gray-700 font-medium mt-6">Analyzing website...</p>
+              <p class="text-gray-500 text-sm mt-2">This may take a few moments</p>
+              <div class="mt-4 w-48 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <!-- High Priority Text -->
-        <div class="mb-6">
-          <h3 class="text-xl font-medium mb-2">High Priority Text</h3>
-          <div id="priority-1-container" class="p-4 bg-gray-50 rounded-md overflow-auto max-h-64 text-sm">
-            <!-- Priority 1 text will be inserted here -->
+        
+        <div class="md:w-2/3 p-8 gradient-secondary">
+          <div id="default-message" class="py-20 text-center">
+            <div class="mb-6 mx-auto w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="fas fa-search text-blue-400 text-4xl"></i>
+            </div>
+            <h2 class="text-xl font-medium text-gray-500 mb-2">Ready to Analyze</h2>
+            <p class="text-gray-400 max-w-md mx-auto">Enter a website URL on the left and click "Analyze Website" to see the detailed brand analysis results</p>
           </div>
-        </div>
+          
+          <div id="results-container" class="hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+              <i class="fas fa-chart-line text-blue-500 mr-3"></i>
+              Analysis Results
+            </h2>
+          
+            <div class="flex flex-col md:flex-row gap-6 mb-8">
+              <div class="md:w-2/3">
+                <div class="card bg-white p-4 h-full">
+                  <h3 class="text-lg font-medium mb-3 text-gray-700 flex items-center">
+                    <i class="fas fa-image text-blue-500 mr-2"></i>
+                    Primary Screenshot
+                  </h3>
+                  <div id="main-image-container" class="aspect-video bg-gray-50 flex items-center justify-center overflow-hidden rounded-lg shadow-inner">
+                    <p class="text-gray-400 text-sm">No image available</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="md:w-1/3">
+                <div class="card bg-white p-4 h-full">
+                  <h3 class="text-lg font-medium mb-3 text-gray-700 flex items-center">
+                    <i class="fas fa-images text-blue-500 mr-2"></i>
+                    Key Images
+                  </h3>
+                  <div id="thumbnail-container" class="space-y-3">
+                    <div class="aspect-video bg-gray-50 flex items-center justify-center rounded-lg shadow-inner">
+                      <p class="text-gray-400 text-xs">Thumbnail 1</p>
+                    </div>
+                    <div class="aspect-video bg-gray-50 flex items-center justify-center rounded-lg shadow-inner">
+                      <p class="text-gray-400 text-xs">Thumbnail 2</p>
+                    </div>
+                    <div class="aspect-video bg-gray-50 flex items-center justify-center rounded-lg shadow-inner">
+                      <p class="text-gray-400 text-xs">Thumbnail 3</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-6">
+              <div class="md:w-1/2">
+                <div class="card bg-white p-4 h-full">
+                  <h3 class="text-lg font-medium mb-3 text-gray-700 flex items-center">
+                    <i class="fas fa-star text-yellow-500 mr-2"></i>
+                    High Priority Text
+                  </h3>
+                  <div id="priority-1-container" class="overflow-auto custom-scrollbar max-h-72 text-sm">
 
-        <!-- Secondary Text -->
-        <div class="mb-6">
-          <h3 class="text-xl font-medium mb-2">Secondary Text</h3>
-          <div id="priority-2-container" class="p-4 bg-gray-50 rounded-md overflow-auto max-h-64 text-sm">
-            <!-- Priority 2 text will be inserted here -->
+                    <p class="text-gray-400">Loading high priority text...</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="md:w-1/2">
+                <div class="card bg-white p-4 h-full">
+                  <h3 class="text-lg font-medium mb-3 text-gray-700 flex items-center">
+                    <i class="fas fa-align-left text-gray-500 mr-2"></i>
+                    Secondary Text
+                  </h3>
+                  <div id="priority-2-container" class="overflow-auto custom-scrollbar max-h-72 text-sm">
+                    <p class="text-gray-400">Loading secondary text...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-8">
+              <button id="toggle-all-images" class="flex items-center text-blue-600 hover:text-blue-800 mb-3 transition-colors duration-200">
+                <i class="fas fa-chevron-right mr-2 transition-transform duration-200"></i>
+                <span class="font-medium">Show all extracted images</span>
+              </button>
+              <div id="all-images-container" class="hidden card bg-white p-5">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-auto custom-scrollbar max-h-96">
+                  <!-- All images will be inserted here -->
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- jQuery AJAX Script -->
   <script>
     $(document).ready(function() {
+      $('#toggle-all-images').on('click', function() {
+        $('#all-images-container').toggleClass('hidden');
+        $(this).find('i').toggleClass('transform rotate-90');
+        
+        const buttonText = $('#all-images-container').hasClass('hidden') ? 
+          'Show all extracted images' : 'Hide all extracted images';
+        $(this).find('span').text(buttonText);
+      });
+
       $('#url-form').on('submit', function(e) {
         e.preventDefault();
         const url = $('#url-input').val();
         if (!url) return;
-        
-        // Show loading animation and hide results
+
+        $('#input-section').addClass('hidden');
         $('#loading-animation').removeClass('hidden');
+        $('#default-message').addClass('hidden');
         $('#results-container').addClass('hidden');
         
-        // Send AJAX request
         $.ajax({
           url: '/process',
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ url: url }),
           success: function(response) {
-            // Hide loading animation
+      
             $('#loading-animation').addClass('hidden');
+            $('#input-section').removeClass('hidden');
+            
             if (response.success) {
-              // Display images
-              const imagesContainer = $('#images-container');
-              imagesContainer.empty();
+          
               if (response.images && response.images.length > 0) {
+
+                $('#main-image-container').html(
+                  `<img src="${response.images[0]}" alt="Main screenshot" class="w-full h-full object-cover rounded-lg shadow transition-all duration-300 hover:shadow-md">`
+                );
+                
+                const thumbnailContainer = $('#thumbnail-container');
+                thumbnailContainer.empty();
+                
+                const thumbnailCount = Math.min(response.images.length, 3);
+                for (let i = 0; i < thumbnailCount; i++) {
+                  thumbnailContainer.append(
+                    `<div class="aspect-video bg-gray-50 overflow-hidden rounded-lg shadow-sm hover:shadow transition-all duration-300">
+                      <img src="${response.images[i]}" alt="Thumbnail ${i+1}" class="w-full h-full object-cover">
+                    </div>`
+                  );
+                }
+                
+                const allImagesContainer = $('#all-images-container');
+                allImagesContainer.empty();
+                
                 response.images.forEach(function(imgSrc) {
-                  imagesContainer.append(
-                    `<div class="overflow-hidden rounded-md shadow">
-                      <img src="${imgSrc}" alt="Extracted image" class="w-full h-32 object-cover">
+                  allImagesContainer.append(
+                    `<div class="overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 bg-white">
+                      <img src="${imgSrc}" alt="Extracted image" class="w-full h-32 object-cover hover:opacity-90 transition-opacity">
                     </div>`
                   );
                 });
+            
+                $('#toggle-all-images span').text(`Show all extracted images (${response.images.length})`);
               } else {
-                imagesContainer.html('<p class="text-gray-500">No images found.</p>');
+                $('#main-image-container').html(
+                  `<div class="flex flex-col items-center justify-center h-full py-10">
+                    <i class="fas fa-image text-gray-300 text-4xl mb-3"></i>
+                    <p class="text-gray-400">No images found</p>
+                  </div>`
+                );
+                
+                $('#thumbnail-container').html(
+                  `<div class="flex flex-col items-center justify-center h-full py-10">
+                    <p class="text-gray-400 text-sm">No images available</p>
+                  </div>`
+                );
+                
+                $('#all-images-container').html(
+                  `<p class="text-gray-400 text-center py-10">No images found on this website.</p>`
+                );
+                
+                $('#toggle-all-images span').text('No images to display');
               }
               
-              // Display text content
               $('#priority-1-container').html(
                 response.priority_1 ?
-                response.priority_1.split('\n').map(line => `<p class="mb-1">${line}</p>`).join('') :
-                '<p class="text-gray-500">No high priority text found.</p>'
+                response.priority_1.split('\n').map(line => 
+                  `<div class="py-2 px-3 border-l-3 border-blue-500 mb-2 bg-blue-50 rounded-r-md hover:bg-blue-100 transition-colors duration-200">${line}</div>`
+                ).join('') :
+                '<div class="flex flex-col items-center justify-center py-6"><i class="fas fa-info-circle text-gray-300 text-2xl mb-2"></i><p class="text-gray-500">No high priority text found.</p></div>'
               );
               
               $('#priority-2-container').html(
                 response.priority_2 ?
-                response.priority_2.split('\n').map(line => `<p class="mb-1">${line}</p>`).join('') :
-                '<p class="text-gray-500">No secondary text found.</p>'
+                response.priority_2.split('\n').map(line => 
+                  `<div class="py-2 px-3 border-l-3 border-gray-300 mb-2 bg-gray-50 rounded-r-md hover:bg-gray-100 transition-colors duration-200">${line}</div>`
+                ).join('') :
+                '<div class="flex flex-col items-center justify-center py-6"><i class="fas fa-info-circle text-gray-300 text-2xl mb-2"></i><p class="text-gray-500">No secondary text found.</p></div>'
               );
               
-              // Show results container
-              $('#results-container').removeClass('hidden');
+              $('#results-container').removeClass('hidden').addClass('fade-in');
             } else {
-              alert('Error: ' + response.error);
+              $('#default-message').removeClass('hidden');
+              const errorMsg = `<div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 fade-in">
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm">${response.error || 'An error occurred during processing'}</p>
+                  </div>
+                </div>
+              </div>`;
+              $('#input-section').prepend(errorMsg);
             }
           },
           error: function(xhr, status, error) {
             $('#loading-animation').addClass('hidden');
-            alert('An error occurred during processing. Please try again.');
+            $('#input-section').removeClass('hidden');
+            $('#default-message').removeClass('hidden');
+            
+            const errorMsg = `<div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 fade-in">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-exclamation-circle text-red-500"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm">An error occurred during processing. Please try again.</p>
+                </div>
+              </div>
+            </div>`;
+            $('#input-section').prepend(errorMsg);
             console.error(error);
           }
         });
