@@ -12,6 +12,16 @@ def index():
 def submit():
     url = request.form.get('url')
     try:
+        # Clear previous results
+        for file in ['priority_1.txt', 'priority_2.txt']:
+            if os.path.exists(file):
+                os.remove(file)
+        
+        image_folder = os.path.join("downloaded_images", "jpg_png")
+        if os.path.exists(image_folder):
+            for file in os.listdir(image_folder):
+                os.remove(os.path.join(image_folder, file))
+        
         # Process the URL with our extraction function
         extract_images_and_text(url)
         
@@ -28,11 +38,10 @@ def submit():
                 priority_2_text = f.read()
         
         # Get image file paths
-        image_folder = os.path.join("downloaded_images", "jpg_png")
         images = []
         if os.path.exists(image_folder):
             images = [f"/downloaded_images/jpg_png/{img}" for img in os.listdir(image_folder) 
-                     if img.lower().endswith(('.png', '.jpg', '.jpeg'))]
+                     if img.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
         
         return render_template('results.html', 
                             url=url,
@@ -46,6 +55,16 @@ def submit():
 def process():
     url = request.json.get('url')
     try:
+        # Clear previous results
+        for file in ['priority_1.txt', 'priority_2.txt']:
+            if os.path.exists(file):
+                os.remove(file)
+        
+        image_folder = os.path.join("downloaded_images", "jpg_png")
+        if os.path.exists(image_folder):
+            for file in os.listdir(image_folder):
+                os.remove(os.path.join(image_folder, file))
+        
         # Process the URL with our extraction function
         extract_images_and_text(url)
         
@@ -62,11 +81,10 @@ def process():
                 priority_2_text = f.read()
         
         # Get image file paths
-        image_folder = os.path.join("downloaded_images", "jpg_png")
         images = []
         if os.path.exists(image_folder):
             images = [f"/downloaded_images/jpg_png/{img}" for img in os.listdir(image_folder) 
-                     if img.lower().endswith(('.png', '.jpg', '.jpeg'))]
+                     if img.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
         
         return jsonify({
             'success': True,
