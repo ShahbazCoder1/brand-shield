@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
-api_token = "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" #os.environ.get("GITHUB_TOKEN")
+api_token = os.environ.get("GITHUB_TOKEN")
 
 client = OpenAI(
     base_url="https://models.inference.ai.azure.com",
