@@ -100,4 +100,4 @@ def save_images(url, base_folder="downloaded_images"):
     else:
         print(f"[✓] Downloaded {downloaded_count} product images.")
 
-save_images("https://www.nearbymedi.store/")
+# save_images("https://www.nearbymedi.store/")

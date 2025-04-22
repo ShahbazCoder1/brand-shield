@@ -18,51 +18,41 @@ def reverse_image_search(image_path, is_local=False):
     Returns a similarity score from 0 to 1 (higher means more likely to be stolen)
     """
     try:
-        # Handle image loading differently based on whether it's a URL or local file
         if is_local:
             img = Image.open(image_path)
         else:
             response = requests.get(image_path)
             img = Image.open(BytesIO(response.content))
         
-        # Convert RGBA to RGB if needed before saving as JPEG
         if img.mode == 'RGBA':
             img = img.convert('RGB')
         
-        # Save temporarily
         temp_path = os.path.abspath("temp_img.jpg")
         img.save(temp_path)
         
-        # Using Selenium to automate Google reverse image search
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         driver = webdriver.Chrome(options=chrome_options)
         
-        # Go to Google Images
         driver.get("https://images.google.com")
         
-        # Click on camera icon
         camera_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//a[@aria-label='Search by image']"))
         )
         camera_button.click()
         
-        # Upload image
         file_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//input[@type='file']"))
         )
         file_input.send_keys(temp_path)
         
-        # Wait for results
         time.sleep(5)
         
-        # Count results to determine how common the image is
         results = driver.find_elements(By.CSS_SELECTOR, ".g")
         num_results = len(results)
         
-        # Calculate score based on number of matches
         if num_results > 10:
-            score = 0.9  # Likely stolen if many matches
+            score = 0.9  
         elif num_results > 5:
             score = 0.7
         elif num_results > 2:
@@ -70,14 +60,14 @@ def reverse_image_search(image_path, is_local=False):
         elif num_results > 0:
             score = 0.3
         else:
-            score = 0.1  # Likely original if no matches
+            score = 0.1 
             
         driver.quit()
         return score
         
     except Exception as e:
         print(f"Error in reverse image search: {e}")
-        return 0.5  # Neutral score if error occurs
+        return 0.5 
 
 def analyze_metadata(image_path, is_local=False):
     """
@@ -85,7 +75,6 @@ def analyze_metadata(image_path, is_local=False):
     Returns a suspicion score from 0 to 1
     """
     try:
-        # Handle image loading differently based on whether it's a URL or local file
         if is_local:
             img = Image.open(image_path)
         else:
@@ -98,25 +87,22 @@ def analyze_metadata(image_path, is_local=False):
             for tag_id, value in img._getexif().items():
                 tag = TAGS.get(tag_id, tag_id)
                 exif_data[tag] = value
-        
-        # Check for metadata removal (suspicious)
+    
         if len(exif_data) < 5:
-            return 0.7  # Suspicious if little metadata
+            return 0.7 
             
-        # Check for software used (Photoshop, etc.)
         if 'Software' in exif_data:
             if 'photoshop' in exif_data['Software'].lower():
-                return 0.6  # More likely to be edited
+                return 0.6 
         
-        # Check for original date
         if 'DateTimeOriginal' not in exif_data:
-            return 0.5  # Moderately suspicious if no original date
+            return 0.5  
             
-        return 0.2  # Low suspicion if metadata seems normal
+        return 0.2 
         
     except Exception as e:
         print(f"Error in metadata analysis: {e}")
-        return 0.4  # Neutral-suspicious if error occurs
+        return 0.4 
 
 def compare_image_hash(image_path, database_urls, is_local=False):
     """
@@ -124,17 +110,14 @@ def compare_image_hash(image_path, database_urls, is_local=False):
     Returns similarity score from 0 to 1
     """
     try:
-        # Handle image loading differently based on whether it's a URL or local file
         if is_local:
             target_img = Image.open(image_path)
         else:
             response = requests.get(image_path)
             target_img = Image.open(BytesIO(response.content))
         
-        # Calculate perceptual hash
         target_hash = imagehash.phash(target_img)
-        
-        # Compare with database images
+
         similarity_scores = []
         
         for db_url in database_urls:
@@ -143,19 +126,16 @@ def compare_image_hash(image_path, database_urls, is_local=False):
                 db_img = Image.open(BytesIO(db_response.content))
                 db_hash = imagehash.phash(db_img)
                 
-                # Calculate hash difference (0 is identical, higher is different)
                 hash_diff = target_hash - db_hash
                 
-                # Convert to similarity score (0 to 1)
                 similarity = 1.0 if hash_diff == 0 else 1.0 / (1.0 + hash_diff)
                 similarity_scores.append(similarity)
             except:
                 continue
         
-        # Return maximum similarity if any found
         if similarity_scores:
             return max(similarity_scores)
-        return 0.0  # No similarity if no valid comparisons
+        return 0.0
         
     except Exception as e:
         print(f"Error in hash comparison: {e}")
@@ -167,43 +147,35 @@ def detect_manipulation(image_path, is_local=False):
     Returns a suspicion score from 0 to 1
     """
     try:
-        # Handle image loading differently based on whether it's a URL or local file
         if is_local:
             img = Image.open(image_path)
         else:
             response = requests.get(image_path)
             img = Image.open(BytesIO(response.content))
         
-        # Convert to array for analysis
         img_array = np.array(img)
         
-        # Simple error level analysis
-        # Look for inconsistencies in compression artifacts
         if len(img_array.shape) == 3 and img_array.shape[2] >= 3:
-            # Check color distribution for anomalies
             r, g, b = img_array[:,:,0], img_array[:,:,1], img_array[:,:,2]
             
-            # Check for unusual color correlations (potential sign of manipulation)
             correlation_rg = np.corrcoef(r.flatten(), g.flatten())[0,1]
             correlation_rb = np.corrcoef(r.flatten(), b.flatten())[0,1]
             correlation_gb = np.corrcoef(g.flatten(), b.flatten())[0,1]
             
             avg_correlation = (correlation_rg + correlation_rb + correlation_gb) / 3
             
-            # Very high or very low correlation can indicate manipulation
             if avg_correlation > 0.98 or avg_correlation < 0.4:
                 return 0.7
             
-        # Check image dimensions - unusually perfect dimensions sometimes indicate stock/generated images
         width, height = img.size
         if width % 100 == 0 and height % 100 == 0:
             return 0.6
             
-        return 0.3  # Low suspicion by default
+        return 0.3
         
     except Exception as e:
         print(f"Error in manipulation detection: {e}")
-        return 0.5  # Neutral score if error occurs
+        return 0.5
 
 def get_image_urls_from_page(product_url):
     """
@@ -215,12 +187,10 @@ def get_image_urls_from_page(product_url):
         driver = webdriver.Chrome(options=chrome_options)
         
         driver.get(product_url)
-        time.sleep(3)  # Wait for page to load
+        time.sleep(3)  
         
-        # Find image elements - adjust selectors based on the website structure
         image_elements = driver.find_elements(By.CSS_SELECTOR, "img")
         
-        # Extract URLs
         image_urls = []
         for img in image_elements:
             src = img.get_attribute("src")
@@ -242,17 +212,14 @@ def calculate_fakeness_score(image_path, database_urls=None, is_local=False):
     if database_urls is None:
         database_urls = []
     
-    # Get individual scores
     reverse_search_score = reverse_image_search(image_path, is_local)
     metadata_score = analyze_metadata(image_path, is_local)
     manipulation_score = detect_manipulation(image_path, is_local)
     
-    # Get hash comparison score if database provided
     hash_score = compare_image_hash(image_path, database_urls, is_local) if database_urls else 0.0
     
-    # Weighted average (you can adjust weights based on reliability)
     weights = {
-        'reverse_search': 0.4,  # Most reliable indicator for stolen images
+        'reverse_search': 0.4,
         'metadata': 0.2,
         'manipulation': 0.3,
         'hash_comparison': 0.1
@@ -274,7 +241,6 @@ def calculate_fakeness_score(image_path, database_urls=None, is_local=False):
         1.0: "Almost certainly fake/stolen"
     }
     
-    # Find closest confidence level
     closest_key = min(confidence.keys(), key=lambda k: abs(k - final_score))
     
     return {
@@ -300,51 +266,51 @@ def check_product_images(product_url):
     
     return results
 
-if __name__ == "__main__":
-    import sys
+# if __name__ == "__main__":
+#     import sys
     
-    if len(sys.argv) < 2:
-        print("Usage: python test.py <image_path_or_url>")
-        sys.exit(1)
+#     if len(sys.argv) < 2:
+#         print("Usage: python test.py <image_path_or_url>")
+#         sys.exit(1)
     
-    image_input = sys.argv[1]
+#     image_input = sys.argv[1]
     
-    # Check if input is URL or local file
-    if image_input.startswith(('http://', 'https://')):
-        # Input is a URL
-        if 'product' in image_input.lower() or '/' in image_input.split('.')[-1]:
-            # Looks like a product page
-            print("Analyzing product page images...")
-            results = check_product_images(image_input)
-            for img_key, result in results.items():
-                print(f"\n{img_key}:")
-                print(f"Fakeness score: {result['score']:.2f}")
-                print(f"Assessment: {result['assessment']}")
-        else:
-            # Single image URL
-            print("Analyzing single image...")
-            result = calculate_fakeness_score(image_input)
-            print(f"Fakeness score: {result['score']:.2f}")
-            print(f"Assessment: {result['assessment']}")
-            print("\nComponent scores:")
-            for key, score in result['component_scores'].items():
-                print(f"- {key}: {score:.2f}")
-    else:
-        # Input is a local file path
-        try:
-            local_path = os.path.abspath(image_input)
-            if not os.path.exists(local_path):
-                print(f"Error: File not found - {local_path}")
-                sys.exit(1)
+#     # Check if input is URL or local file
+#     if image_input.startswith(('http://', 'https://')):
+#         # Input is a URL
+#         if 'product' in image_input.lower() or '/' in image_input.split('.')[-1]:
+#             # Looks like a product page
+#             print("Analyzing product page images...")
+#             results = check_product_images(image_input)
+#             for img_key, result in results.items():
+#                 print(f"\n{img_key}:")
+#                 print(f"Fakeness score: {result['score']:.2f}")
+#                 print(f"Assessment: {result['assessment']}")
+#         else:
+#             # Single image URL
+#             print("Analyzing single image...")
+#             result = calculate_fakeness_score(image_input)
+#             print(f"Fakeness score: {result['score']:.2f}")
+#             print(f"Assessment: {result['assessment']}")
+#             print("\nComponent scores:")
+#             for key, score in result['component_scores'].items():
+#                 print(f"- {key}: {score:.2f}")
+#     else:
+#         # Input is a local file path
+#         try:
+#             local_path = os.path.abspath(image_input)
+#             if not os.path.exists(local_path):
+#                 print(f"Error: File not found - {local_path}")
+#                 sys.exit(1)
                 
-            print("Analyzing local image...")
-            # Pass the local path directly instead of trying to convert to a URL format
-            result = calculate_fakeness_score(local_path, is_local=True)
-            print(f"Fakeness score: {result['score']:.2f}")
-            print(f"Assessment: {result['assessment']}")
-            print("\nComponent scores:")
-            for key, score in result['component_scores'].items():
-                print(f"- {key}: {score:.2f}")
-        except Exception as e:
-            print(f"Error processing local file: {e}")
-            sys.exit(1)
+#             print("Analyzing local image...")
+#             # Pass the local path directly instead of trying to convert to a URL format
+#             result = calculate_fakeness_score(local_path, is_local=True)
+#             print(f"Fakeness score: {result['score']:.2f}")
+#             print(f"Assessment: {result['assessment']}")
+#             print("\nComponent scores:")
+#             for key, score in result['component_scores'].items():
+#                 print(f"- {key}: {score:.2f}")
+#         except Exception as e:
+#             print(f"Error processing local file: {e}")
+#             sys.exit(1)

@@ -50,6 +50,25 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #9ca3af;
     }
+    
+    .progress-bar {
+      height: 8px;
+      border-radius: 4px;
+      background-color: #e5e7eb;
+      overflow: hidden;
+    }
+    
+    .progress-value {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+    
+    .trust-high { background-color: #10b981; }
+    .trust-good { background-color: #60a5fa; }
+    .trust-medium { background-color: #fbbf24; }
+    .trust-poor { background-color: #f97316; }
+    .trust-bad { background-color: #ef4444; }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -186,6 +205,23 @@
               <i class="fas fa-chart-line text-blue-500 mr-3"></i>
               Analysis Results
             </h2>
+            
+            <!-- Trust Score Overview -->
+            <div class="card bg-white p-6 mb-6">
+              <h3 class="text-lg font-medium mb-4 text-gray-700">Trust Score Overview</h3>
+              <div class="flex items-center mb-4">
+                <div class="w-full">
+                  <div class="flex justify-between mb-1">
+                    <span id="trust-score-label" class="text-sm font-medium text-gray-700">Analyzing...</span>
+                    <span id="trust-score-value" class="text-sm font-medium text-gray-700">0%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div id="trust-score-bar" class="progress-value" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+              <p id="trust-score-description" class="text-sm text-gray-500">Awaiting analysis results...</p>
+            </div>
           
             <div class="flex flex-col md:flex-row gap-6 mb-8">
               <div class="md:w-2/3">
@@ -221,7 +257,7 @@
               </div>
             </div>
             
-            <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-col md:flex-row gap-6 mb-8">
               <div class="md:w-1/2">
                 <div class="card bg-white p-4 h-full">
                   <h3 class="text-lg font-medium mb-3 text-gray-700 flex items-center">
@@ -229,7 +265,6 @@
                     High Priority Text
                   </h3>
                   <div id="priority-1-container" class="overflow-auto custom-scrollbar max-h-72 text-sm">
-
                     <p class="text-gray-400">Loading high priority text...</p>
                   </div>
                 </div>
@@ -248,12 +283,48 @@
               </div>
             </div>
             
+            <!-- AI Content Analysis -->
+            <div class="mb-8">
+              <div class="card bg-white p-5">
+                <h3 class="text-lg font-medium mb-4 text-gray-700 flex items-center">
+                  <i class="fas fa-robot text-purple-500 mr-2"></i>
+                  AI Content Analysis
+                </h3>
+                <div id="ai-content-results">
+                  <p class="text-gray-400">Analyzing content for AI generation...</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Text Originality Analysis -->
+            <div class="mb-8">
+              <div class="card bg-white p-5">
+                <h3 class="text-lg font-medium mb-4 text-gray-700 flex items-center">
+                  <i class="fas fa-fingerprint text-green-500 mr-2"></i>
+                  Text Originality Analysis
+                </h3>
+                <div id="text-originality-results">
+                  <p class="text-gray-400">Checking text originality...</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Image Analysis -->
             <div class="mt-8">
               <button id="toggle-all-images" class="flex items-center text-blue-600 hover:text-blue-800 mb-3 transition-colors duration-200">
                 <i class="fas fa-chevron-right mr-2 transition-transform duration-200"></i>
                 <span class="font-medium">Show all extracted images</span>
               </button>
+              
               <div id="all-images-container" class="hidden card bg-white p-5">
+                <h3 class="text-lg font-medium mb-4 text-gray-700 flex items-center">
+                  <i class="fas fa-camera text-blue-500 mr-2"></i>
+                  Image Analysis Results
+                </h3>
+                <div id="image-analysis-results" class="mb-4">
+                  <p class="text-gray-400">Analyzing images for authenticity...</p>
+                </div>
+                
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-auto custom-scrollbar max-h-96">
                   <!-- All images will be inserted here -->
                 </div>
@@ -292,93 +363,37 @@
           contentType: 'application/json',
           data: JSON.stringify({ url: url }),
           success: function(response) {
-      
             $('#loading-animation').addClass('hidden');
             $('#input-section').removeClass('hidden');
             
             if (response.success) {
-          
+              // Update trust score
+              updateTrustScore(response.overall_trust_score, response.trust_level);
+              
+              // Update images
               if (response.images && response.images.length > 0) {
-
-                $('#main-image-container').html(
-                  `<img src="${response.images[0]}" alt="Main screenshot" class="w-full h-full object-cover rounded-lg shadow transition-all duration-300 hover:shadow-md">`
-                );
-                
-                const thumbnailContainer = $('#thumbnail-container');
-                thumbnailContainer.empty();
-                
-                const thumbnailCount = Math.min(response.images.length, 3);
-                for (let i = 0; i < thumbnailCount; i++) {
-                  thumbnailContainer.append(
-                    `<div class="aspect-video bg-gray-50 overflow-hidden rounded-lg shadow-sm hover:shadow transition-all duration-300">
-                      <img src="${response.images[i]}" alt="Thumbnail ${i+1}" class="w-full h-full object-cover">
-                    </div>`
-                  );
-                }
-                
-                const allImagesContainer = $('#all-images-container');
-                allImagesContainer.empty();
-                
-                response.images.forEach(function(imgSrc) {
-                  allImagesContainer.append(
-                    `<div class="overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 bg-white">
-                      <img src="${imgSrc}" alt="Extracted image" class="w-full h-32 object-cover hover:opacity-90 transition-opacity">
-                    </div>`
-                  );
-                });
-            
-                $('#toggle-all-images span').text(`Show all extracted images (${response.images.length})`);
+                updateImages(response.images);
               } else {
-                $('#main-image-container').html(
-                  `<div class="flex flex-col items-center justify-center h-full py-10">
-                    <i class="fas fa-image text-gray-300 text-4xl mb-3"></i>
-                    <p class="text-gray-400">No images found</p>
-                  </div>`
-                );
-                
-                $('#thumbnail-container').html(
-                  `<div class="flex flex-col items-center justify-center h-full py-10">
-                    <p class="text-gray-400 text-sm">No images available</p>
-                  </div>`
-                );
-                
-                $('#all-images-container').html(
-                  `<p class="text-gray-400 text-center py-10">No images found on this website.</p>`
-                );
-                
-                $('#toggle-all-images span').text('No images to display');
+                showNoImagesMessage();
               }
               
-              $('#priority-1-container').html(
-                response.priority_1 ?
-                response.priority_1.split('\n').map(line => 
-                  `<div class="py-2 px-3 border-l-3 border-blue-500 mb-2 bg-blue-50 rounded-r-md hover:bg-blue-100 transition-colors duration-200">${line}</div>`
-                ).join('') :
-                '<div class="flex flex-col items-center justify-center py-6"><i class="fas fa-info-circle text-gray-300 text-2xl mb-2"></i><p class="text-gray-500">No high priority text found.</p></div>'
-              );
+              // Update text content
+              updateTextContent(response.priority_1, response.priority_2);
               
-              $('#priority-2-container').html(
-                response.priority_2 ?
-                response.priority_2.split('\n').map(line => 
-                  `<div class="py-2 px-3 border-l-3 border-gray-300 mb-2 bg-gray-50 rounded-r-md hover:bg-gray-100 transition-colors duration-200">${line}</div>`
-                ).join('') :
-                '<div class="flex flex-col items-center justify-center py-6"><i class="fas fa-info-circle text-gray-300 text-2xl mb-2"></i><p class="text-gray-500">No secondary text found.</p></div>'
-              );
+              // Update AI analysis
+              updateAIContentAnalysis(response.analysis.ai_content);
               
+              // Update text originality
+              updateTextOriginalityAnalysis(response.analysis.text_originality);
+              
+              // Update image analysis
+              updateImageAnalysis(response.analysis.image_analysis);
+              
+              // Show results
               $('#results-container').removeClass('hidden').addClass('fade-in');
             } else {
               $('#default-message').removeClass('hidden');
-              const errorMsg = `<div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 fade-in">
-                <div class="flex">
-                  <div class="flex-shrink-0">
-                    <i class="fas fa-exclamation-circle text-red-500"></i>
-                  </div>
-                  <div class="ml-3">
-                    <p class="text-sm">${response.error || 'An error occurred during processing'}</p>
-                  </div>
-                </div>
-              </div>`;
-              $('#input-section').prepend(errorMsg);
+              showErrorMessage(response.error || 'An error occurred during processing');
             }
           },
           error: function(xhr, status, error) {
@@ -386,21 +401,333 @@
             $('#input-section').removeClass('hidden');
             $('#default-message').removeClass('hidden');
             
-            const errorMsg = `<div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 fade-in">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <i class="fas fa-exclamation-circle text-red-500"></i>
-                </div>
-                <div class="ml-3">
-                  <p class="text-sm">An error occurred during processing. Please try again.</p>
-                </div>
-              </div>
-            </div>`;
-            $('#input-section').prepend(errorMsg);
+            showErrorMessage('An error occurred during processing. Please try again.');
             console.error(error);
           }
         });
       });
+      
+      function updateTrustScore(score, trustLevel) {
+        const percentage = Math.round(score * 100);
+        $('#trust-score-value').text(percentage + '%');
+        $('#trust-score-label').text(trustLevel || 'Trust Score');
+        $('#trust-score-description').text(getTrustDescription(score));
+        
+        // Update progress bar
+        const barElement = $('#trust-score-bar');
+        barElement.css('width', percentage + '%');
+        
+        // Set color based on score
+        barElement.removeClass('trust-high trust-good trust-medium trust-poor trust-bad');
+        if (score >= 0.8) {
+          barElement.addClass('trust-high');
+        } else if (score >= 0.6) {
+          barElement.addClass('trust-good');
+        } else if (score >= 0.4) {
+          barElement.addClass('trust-medium');
+        } else if (score >= 0.2) {
+          barElement.addClass('trust-poor');
+        } else {
+          barElement.addClass('trust-bad');
+        }
+      }
+      
+      function getTrustDescription(score) {
+        if (score >= 0.8) {
+          return "This website appears to have highly authentic content. Both text and images are likely original.";
+        } else if (score >= 0.6) {
+          return "This website has mostly authentic content with some potential concerns.";
+        } else if (score >= 0.4) {
+          return "This website has moderate authenticity concerns that should be reviewed carefully.";
+        } else if (score >= 0.2) {
+          return "This website has significant authenticity issues with content likely generated by AI or copied.";
+        } else {
+          return "This website appears highly suspicious with most content likely being inauthentic or stolen.";
+        }
+      }
+      
+      function updateImages(images) {
+        if (images.length > 0) {
+          // Main image
+          $('#main-image-container').html(
+            `<img src="${images[0]}" alt="Main screenshot" class="w-full h-full object-cover rounded-lg shadow transition-all duration-300 hover:shadow-md">`
+          );
+          
+          // Thumbnails
+          const thumbnailContainer = $('#thumbnail-container');
+          thumbnailContainer.empty();
+          
+          const thumbnailCount = Math.min(images.length, 3);
+          for (let i = 0; i < thumbnailCount; i++) {
+            thumbnailContainer.append(
+              `<div class="aspect-video bg-gray-50 overflow-hidden rounded-lg shadow-sm hover:shadow transition-all duration-300">
+                <img src="${images[i]}" alt="Thumbnail ${i+1}" class="w-full h-full object-cover">
+              </div>`
+            );
+          }
+          
+          // All images
+          const allImagesContainer = $('#all-images-container .grid');
+          allImagesContainer.empty();
+          
+          images.forEach(function(imgSrc) {
+            allImagesContainer.append(
+              `<div class="overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 bg-white">
+                <img src="${imgSrc}" alt="Extracted image" class="w-full h-32 object-cover hover:opacity-90 transition-opacity">
+              </div>`
+            );
+          });
+          
+          $('#toggle-all-images span').text(`Show all extracted images (${images.length})`);
+        }
+      }
+      
+      function showNoImagesMessage() {
+        $('#main-image-container').html(
+          `<div class="flex flex-col items-center justify-center h-full py-10">
+            <i class="fas fa-image text-gray-300 text-4xl mb-3"></i>
+            <p class="text-gray-400">No images found</p>
+          </div>`
+        );
+        
+        $('#thumbnail-container').html(
+          `<div class="flex flex-col items-center justify-center h-full py-10">
+            <p class="text-gray-400 text-sm">No images available</p>
+          </div>`
+        );
+        
+        $('#all-images-container .grid').html(
+          `<p class="text-gray-400 text-center py-10 col-span-full">No images found on this website.</p>`
+        );
+        
+        $('#toggle-all-images span').text('No images to display');
+      }
+      
+      function updateTextContent(priority1, priority2) {
+        $('#priority-1-container').html(
+          priority1 ?
+          priority1.split('\n').map(line => 
+            `<div class="py-2 px-3 border-l-3 border-blue-500 mb-2 bg-blue-50 rounded-r-md hover:bg-blue-100 transition-colors duration-200">${line}</div>`
+          ).join('') :
+          '<div class="flex flex-col items-center justify-center py-6"><i class="fas fa-info-circle text-gray-300 text-2xl mb-2"></i><p class="text-gray-500">No high priority text found.</p></div>'
+        );
+        
+        $('#priority-2-container').html(
+          priority2 ?
+          priority2.split('\n').map(line => 
+            `<div class="py-2 px-3 border-l-3 border-gray-300 mb-2 bg-gray-50 rounded-r-md hover:bg-gray-100 transition-colors duration-200">${line}</div>`
+          ).join('') :
+          '<div class="flex flex-col items-center justify-center py-6"><i class="fas fa-info-circle text-gray-300 text-2xl mb-2"></i><p class="text-gray-500">No secondary text found.</p></div>'
+        );
+      }
+      
+      function updateAIContentAnalysis(aiAnalysis) {
+        if (!aiAnalysis || Object.keys(aiAnalysis).length === 0) {
+          $('#ai-content-results').html(
+            '<p class="text-gray-500">No AI content analysis available.</p>'
+          );
+          return;
+        }
+        
+        const score = aiAnalysis.overall_score || 0;
+        const percentage = Math.round(score * 100);
+        const interpretation = aiAnalysis.overall_interpretation || 'Unknown';
+        
+        let color;
+        if (score < 0.3) color = 'green';
+        else if (score < 0.6) color = 'yellow';
+        else color = 'red';
+        
+        let html = `
+          <div class="mb-4">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-medium text-gray-700">AI Detection Score</span>
+              <span class="text-sm font-medium text-${color}-600">${percentage}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-value bg-${color}-500" style="width: ${percentage}%"></div>
+            </div>
+            <p class="mt-1 text-sm text-gray-600">${interpretation}</p>
+          </div>
+        `;
+        
+        html += '<div class="mt-4"><h4 class="font-medium text-sm mb-2 text-gray-700">Component Analysis:</h4><div class="space-y-2">';
+        
+        // Component scores
+        if (aiAnalysis.components) {
+          for (const [component, data] of Object.entries(aiAnalysis.components)) {
+            const compScore = data.score || 0;
+            const compPercentage = Math.round(compScore * 100);
+            let compColor;
+            if (compScore < 0.3) compColor = 'green';
+            else if (compScore < 0.6) compColor = 'yellow';
+            else compColor = 'red';
+            
+            html += `
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700">${component.charAt(0).toUpperCase() + component.slice(1)}</span>
+                  <span class="text-sm font-medium text-${compColor}-600">${compPercentage}%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-value bg-${compColor}-500" style="width: ${compPercentage}%"></div>
+                </div>
+                <p class="mt-1 text-xs text-gray-600">${data.interpretation || 'No interpretation available'}</p>
+              </div>
+            `;
+          }
+        }
+        
+        html += '</div></div>';
+        
+        $('#ai-content-results').html(html);
+      }
+      
+      function updateTextOriginalityAnalysis(textOriginality) {
+        if (!textOriginality || Object.keys(textOriginality).length === 0) {
+          $('#text-originality-results').html(
+            '<p class="text-gray-500">No text originality analysis available.</p>'
+          );
+          return;
+        }
+        
+        const score = textOriginality.overall_score || 0;
+        const percentage = Math.round(score * 100);
+        const trustLevel = textOriginality.trust_level || 'Unknown';
+        
+        let color;
+        if (score >= 0.7) color = 'green';
+        else if (score >= 0.4) color = 'yellow';
+        else color = 'red';
+        
+        let html = `
+          <div class="mb-4">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-medium text-gray-700">Text Originality Score</span>
+              <span class="text-sm font-medium text-${color}-600">${percentage}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-value bg-${color}-500" style="width: ${percentage}%"></div>
+            </div>
+            <p class="mt-1 text-sm text-gray-600">${trustLevel}</p>
+          </div>
+        `;
+        
+        // Component scores
+        if (textOriginality.component_scores && textOriginality.component_scores.length > 0) {
+          html += '<div class="mt-4"><h4 class="font-medium text-sm mb-2 text-gray-700">Component Analysis:</h4><ul class="list-disc pl-5 text-sm text-gray-600 space-y-1">';
+          
+          textOriginality.component_scores.forEach(component => {
+            html += `<li>${component}</li>`;
+          });
+          
+          html += '</ul></div>';
+        }
+        
+        $('#text-originality-results').html(html);
+      }
+      
+      function updateImageAnalysis(imageAnalysis) {
+        if (!imageAnalysis || imageAnalysis.length === 0) {
+          $('#image-analysis-results').html(
+            '<p class="text-gray-500">No image analysis available.</p>'
+          );
+          return;
+        }
+        
+        // Calculate average score
+        let totalScore = 0;
+        imageAnalysis.forEach(img => {
+          if (img.analysis && typeof img.analysis.score === 'number') {
+            totalScore += img.analysis.score;
+          }
+        });
+        
+        const avgScore = totalScore / imageAnalysis.length;
+        const percentage = Math.round(avgScore * 100);
+        
+        let color;
+        if (avgScore < 0.3) color = 'green';
+        else if (avgScore < 0.6) color = 'yellow';
+        else color = 'red';
+        
+        let html = `
+          <div class="mb-4">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-medium text-gray-700">Average Image Fakeness Score</span>
+              <span class="text-sm font-medium text-${color}-600">${percentage}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-value bg-${color}-500" style="width: ${percentage}%"></div>
+            </div>
+            <p class="mt-1 text-sm text-gray-600">
+              ${avgScore < 0.3 ? 'Images appear mostly authentic' : 
+                avgScore < 0.6 ? 'Some images may be manipulated or stolen' : 
+                'High likelihood of fake or stolen images'}
+            </p>
+          </div>
+        `;
+        
+        // Individual image scores
+        if (imageAnalysis.length > 0) {
+          html += '<div class="mt-4 overflow-auto custom-scrollbar max-h-60"><h4 class="font-medium text-sm mb-2 text-gray-700">Individual Image Analysis:</h4>';
+          
+          html += '<div class="space-y-3">';
+          imageAnalysis.forEach((img, index) => {
+            if (img.analysis) {
+              const imgScore = img.analysis.score || 0;
+              const imgPercentage = Math.round(imgScore * 100);
+              
+              let imgColor;
+              if (imgScore < 0.3) imgColor = 'green';
+              else if (imgScore < 0.6) imgColor = 'yellow';
+              else imgColor = 'red';
+              
+              html += `
+                <div class="p-3 bg-gray-50 rounded-lg flex">
+                  <div class="w-16 h-16 flex-shrink-0 bg-gray-200 rounded overflow-hidden mr-3">
+                    <img src="${img.path}" alt="Image ${index+1}" class="w-full h-full object-cover">
+                  </div>
+                  <div class="flex-grow">
+                    <div class="flex justify-between mb-1">
+                      <span class="text-xs font-medium text-gray-700">Image ${index+1}</span>
+                      <span class="text-xs font-medium text-${imgColor}-600">${imgPercentage}% fake score</span>
+                    </div>
+                    <div class="progress-bar">
+                      <div class="progress-value bg-${imgColor}-500" style="width: ${imgPercentage}%"></div>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-600">${img.analysis.assessment || 'No assessment available'}</p>
+                  </div>
+                </div>
+              `;
+            }
+          });
+          html += '</div></div>';
+        }
+        
+        $('#image-analysis-results').html(html);
+      }
+      
+      function showErrorMessage(message) {
+        const errorMsg = `<div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 fade-in">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-circle text-red-500"></i>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm">${message}</p>
+            </div>
+          </div>
+        </div>`;
+        $('#input-section').prepend(errorMsg);
+        
+        // Remove error message after 5 seconds
+        setTimeout(() => {
+          $('#input-section .bg-red-50').fadeOut(function() {
+            $(this).remove();
+          });
+        }, 5000);
+      }
     });
   </script>
 </body>

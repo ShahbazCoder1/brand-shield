@@ -169,11 +169,11 @@ def verify_product_content(url):
     trust_score = calculate_trust_score(content)
     return {"url": url, "content_found": content, "trust_analysis": trust_score}
 
-if __name__ == "__main__":
-	product_url = "https://www.amazon.com/CHONCHOW-Wireless-Keyboard-Rechargeable-Waterproof/dp/B0D2D1HWC3/"
-	result = verify_product_content(product_url)
-	print(f"Trust score: {result['trust_analysis']['overall_score']:.2f}")
-	print(f"Trust level: {result['trust_analysis']['trust_level']}")
-	print("Component scores:")
-	for component in result['trust_analysis']['component_scores']:
-		print(f"- {component}")
+# if __name__ == "__main__":
+# 	product_url = "https://www.amazon.com/CHONCHOW-Wireless-Keyboard-Rechargeable-Waterproof/dp/B0D2D1HWC3/"
+# 	result = verify_product_content(product_url)
+# 	print(f"Trust score: {result['trust_analysis']['overall_score']:.2f}")
+# 	print(f"Trust level: {result['trust_analysis']['trust_level']}")
+# 	print("Component scores:")
+# 	for component in result['trust_analysis']['component_scores']:
+# 		print(f"- {component}")
