@@ -1,84 +1,99 @@
-"""
-Old code for image and text extraction from a webpage using Selenium and BeautifulSoup.
-"""
-
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from bs4 import BeautifulSoup
-import requests
 import os
-from urllib.parse import urljoin, urlparse
+import time
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import subprocess
 
-def extract_images_and_text(url, base_folder="downloaded_images"):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox")
+def find_chrome_binary():
+    # List of possible Chrome/Chromium binary names and locations
+    possible_paths = [
+        "/usr/bin/chromium-browser",
+        "/usr/bin/chromium",
+        "/usr/bin/google-chrome",
+        "/usr/bin/chrome",
+        "/usr/lib/chromium-browser/chromium-browser",
+        "/usr/lib/chromium/chromium",
+        # Add Snap installation path
+        "/snap/bin/chromium",
+        # Add Flatpak installation path
+        "/var/lib/flatpak/app/org.chromium.Chromium/current/active/files/bin/chromium"
+    ]
+    
+    # Try to get Chrome location using 'which' command
+    try:
+        chrome_path = subprocess.check_output(["which", "chromium-browser"]).decode().strip()
+        if os.path.exists(chrome_path):
+            return chrome_path
+    except subprocess.CalledProcessError:
+        pass
 
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.get(url)
-    html = driver.page_source
-    driver.quit()
+    # Check all possible paths
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+            
+    # If we get here, we couldn't find Chrome
+    existing_paths = "\n".join([f"Checked {p} - {'Exists' if os.path.exists(p) else 'Not Found'}" for p in possible_paths])
+    raise Exception(f"Chrome/Chromium browser binary not found. Checked locations:\n{existing_paths}\n\nPlease install Chrome or Chromium using:\nsudo apt update && sudo apt install chromium-browser chromium-chromedriver")
 
-    soup = BeautifulSoup(html, "html.parser")
+def get_driver():
+    options = uc.ChromeOptions()
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    
+    # Find and set Chrome binary location
+    chrome_path = find_chrome_binary()
+    print(f"Using Chrome binary at: {chrome_path}")
+    options.binary_location = chrome_path
+    
+    return uc.Chrome(options=options)
 
-    visible_tags = ['p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'a', 'strong', 'em', 'b', 'i', 'u']
-    blacklist = ['[document]', 'noscript', 'header', 'html', 'meta', 'head', 'input', 'script', 'style']
+def reverse_image_search(driver, image_path):
+    driver.get("https://lens.google.com/upload")
 
-    def clean_text(soup):
-        output = []
-        for element in soup.find_all(text=True):
-            if element.parent.name in blacklist:
-                continue
-            text = element.strip()
-            if text and element.parent.name in visible_tags:
-                output.append((element.parent.name, text))
-        return output
+    try:
+        upload_input = WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
+        )
+        upload_input.send_keys(os.path.abspath(image_path))
 
-    text_content = clean_text(soup)
+        # Wait for result page
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div[role='main']"))
+        )
 
-    priority_1 = [text for tag, text in text_content if tag != 'p']
-    priority_2 = [text for tag, text in text_content if tag == 'p']
+        print(f"[FOUND] {os.path.basename(image_path)} found on web ✅")
+    except Exception as e:
+        print(f"[ERROR] {os.path.basename(image_path)}: {e}")
+        driver.save_screenshot("error_screenshot.png")
 
-    with open("priority_1.txt", "w", encoding="utf-8") as f1:
-        f1.write("\n".join(priority_1))
-    with open("priority_2.txt", "w", encoding="utf-8") as f2:
-        f2.write("\n".join(priority_2))
+def main():
+    # First check if the image folder exists
+    image_folder = "downloaded_images/jpg_png"
+    if not os.path.exists(image_folder):
+        raise Exception(f"Image folder not found: {image_folder}")
 
-    print("[✓] Text saved to priority_1.txt and priority_2.txt")
+    image_paths = [
+        os.path.join(image_folder, f)
+        for f in os.listdir(image_folder)
+        if f.lower().endswith(('.png', '.jpg', '.jpeg'))
+    ]
 
-    os.makedirs(base_folder, exist_ok=True)
-    jpg_png_folder = os.path.join(base_folder, "jpg_png")
-    os.makedirs(jpg_png_folder, exist_ok=True)
+    if not image_paths:
+        raise Exception(f"No images found in {image_folder}")
 
-    img_tags = soup.find_all("img")
-    for i, img in enumerate(img_tags):
-        img_url = img.get("src")
-        if not img_url:
-            continue
-        full_url = urljoin(url, img_url)
+    for img in image_paths:
         try:
-            response = requests.get(full_url)
-            ext = os.path.splitext(urlparse(full_url).path)[1].lower().lstrip(".")
+            driver = get_driver()
+            reverse_image_search(driver, img)
+        finally:
+            try:
+                driver.quit()
+            except:
+                pass
 
-            if not ext:
-                ext = "jpg"
-
-            if ext in ["jpg", "jpeg", "png"]:
-                save_folder = jpg_png_folder
-            else:
-                save_folder = os.path.join(base_folder, ext)
-                os.makedirs(save_folder, exist_ok=True)
-
-            filename = os.path.join(save_folder, f"image_{i+1}.{ext}")
-            with open(filename, "wb") as f:
-                f.write(response.content)
-            print(f"[✓] Downloaded {filename}")
-        except Exception as e:
-            print(f"[✗] Failed to download {full_url}: {e}")
-
-# <<<<<<< HEAD
-# extract_images_and_text("http://localhost:8000/")
-# =======
-# extract_images_and_text("https://shahbazcoder1.github.io/brand-shield/")
-# >>>>>>> 98f47a1 (Add keyword extraction and brand name generation script)
+if __name__ == "__main__":
+    main()
